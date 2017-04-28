@@ -1,0 +1,53 @@
+Oke ,, ini mudah dipake, kapasitas nya juga bisa sampe jutaan data. jdi bisa ditampilkan sebagai last search dan bisa dijadikan sitemap.  
+#PERTAMA - BUAT DATABASE
+bikin database dulu lah. cara nya bisa cek google aja, usahakan database name dan user nya disamakan aja ya misal user_db jangan user_a untuk name dan user_db untuk user nya takutnya nnti kebalik pasang nya klo beda. klo sama gk masalah kebalik masang.
+#KEDUA - BUAT TABLE
+bikin file sembarang misal create.php isi nya
+
+<?php
+mysql_select_db(“user_db”,
+   mysql_connect(“localhost”, “user_db”, “sandi_db”))
+                   or die (mysql_error());
+
+mysql_query("CREATE TABLE `query` (
+`id` int(15) NOT NULL auto_increment,
+`q` varchar(200) NOT NULL default '',
+PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1") or die (mysql_error());
+echo 'Sukses install table';
+?>
+Jika selesai. kunjungi file ini.. jika tulisan yg muncul Sukses berarti table berhasil dibuat. silahkan hapus file ini.
+** user_db dan sandi_db sesuaikan dgn data saat membuat database
+#KETIGA - SIMPAN QUERY
+nah, untuk ini bisa dipasang di form action atau di halaman search atau dimana aja yang pokok nya halaman file itu menerima kiriman query (q = query) atau keyword. contoh nya music.php?q=starla nah berarti halaman music.php ini yang menerima kiriman query nya. tinggal kita kasih kode ini, pasang di dalam file nya dimanapun kamu mau asal didalam php
+
+mysql_select_db(“user_db”,
+   mysql_connect(“localhost”, “user_db”, “sandi_db”))
+                   or die (mysql_error());
+ // cek jumlah keyword ini didatabase  
+// jika kurang dari satu atau nol maka kita masukan, jika sudah ada tak perlu dimasukan 
+ if($q){
+$cekdb = mysql_num_rows(mysql_query(“select * from `keys` where `q`=’$q’”));
+if($cekdb < 1){
+mysql_query(“insert into `keys` set `q`=’$q’”);
+}
+}
+** $q nya disesuaikan dengan milik mu
+#KEEMPAT - MENAMPILKAN HASIL
+untuk ini sih bisa tampilkan dimanapun kamu mau, misalnya di halaman index atau di mana aja lah
+ mysql_select_db(“user_db”,
+    mysql_connect(“localhost”, “user_db”, “sandi_db”))
+                    or die (mysql_error()); 
+$cekdb = mysql_query(“select * from `keys` order by `id` desc limit 20”);
+if(mysql_num_rows($cekdb) > o){
+while($db = mysql_fetch_array($cekdb)){
+echo ‘<a href=”/music.php?q=’.$db[q].’”>'.$db[q].'</a> - ‘;
+}
+}
+** music.php bisa disesuaikan juga, misal /search/’.$db[q].’/ 
+** limit 20 bisa diganti ke 10 atau 50 jika ingin tampil 20 hasil terbaru.
+** desc artinya dr terbaru. klo mau tampil dari hasil terlama ganti ke asc
+** mungkin hasilnya masih biasa yaitu ada spasi, misal ingin tampil /search/lagu-starla/ bisa di replace aja spasi ke dash (-)
+Oke selesai wkkwk :D untuk sitemap silahkan kreasikan sendiri langkah ke 4.. Jika ada yang salah atau kurang mengerti silahkan tanya di komentar.
+O iya lupa. kalian misal copas kode dari ni fb mungkin banyak error nanti hasil nya wkwk karena tanda petik nya berubah. jdi edit dulu tanda petik nya karena tanda petik di fb ini berbeda sehingga di script dibaca bukan sebagai tanda petik. 
+Req By Andrias Setiawan Subardo
